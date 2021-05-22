@@ -1,2 +1,3 @@
-# tumurzakov.github.io
-Personal blog
+# Temir Umurzakov's blog
+
+## Manticore search engine
