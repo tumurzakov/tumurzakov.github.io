@@ -1,3 +1,3 @@
-# Temir Umurzakov's blog
+# [2021-05-22] Manticore search engine
 
-## Manticore search engine
+Recently I faced the need to organize a full text search on users table by a number of attributes such as address, phone, etc. First thing what I looked at was Sphinx. I was surprised that such project literaly dead. I don't want to use Elasticsearch due to complexity of this solution. By lucky Google picked up an article in chrome app about Manicore search engine. That was what I need. It is an actively developing clone of Sphinx. It is easy to use it thanks to MySQL protocol support. But SQL syntax differs from MySQL's a bit so I couldn't use full power of framework's database stack, only basic query functionaltiy. If I had enought time or project were a little more important I posibliy wrote an full datasource class. It will be cool to work with search indexes as with models.
