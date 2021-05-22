@@ -8,4 +8,4 @@ Recently I faced the need to organize a full text search on users table by a num
 ## Uncle Bob taught me writing unit tests
 2021-05-22
 
-After I read Uncle Bob's book "Clean coder" I became a big fan of TDD. Book clarified to me the true purpose of writing tests. I made a few last projects using ping-pong technique and was very satisfied with that. Every time I feel lazy writing a test I hear Uncle Bob's claim "Who do you think you are?" and "Be professional!" and this is enough motivation for now.
+After I read Uncle Bob's book "Clean coder" I became a big fan of TDD. Book clarified to me the true purpose of writing tests. I made a few last projects using ping-pong technique and was very satisfied with that. Every time I feel lazy writing a test I hear Uncle Bob's claim "Who do you think you are?" and "Be professional!" and this is enough motivation for me now.
