@@ -4,7 +4,7 @@
 * Was born at 1985
 * Working as fullstack software developer in local ISP for a decade
   * Writing code on PHP and Go
-  * Introducing DevOps practices in company
+  * Introducing DevOps practices
     * Gitlab CI/CD
     * Kubernetes
-  * Introducing Scrum management in company
+  * Introducing Scrum management
