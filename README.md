@@ -1,13 +1,14 @@
 * [About Me](aboutme.html)
 
 ## Manticore search engine
-2021-05-22
+2021-05-23
 
-Recently I faced the need to organize a full text search on users table by a number of attributes such as address, phone, etc. First thing I looked at was Sphinx. I was surprised that such a project was literally dead. I don't want to use Elasticsearch due to complexity of this solution. By lucky Google picked up an article in chrome app about [Manticore](https://manticoresearch.com/) search engine. That was what I need. It is an actively developing clone of Sphinx. Thanks to MySQL protocol support it is easy to use especialy in web projects. But SQL syntax differs from MySQL's a bit so I couldn't use the full power of the framework's database stack, only basic query functionality. If I had enough time or project were a little bit more important I possibly wrote a full DataSource class. It will be cool to work with search indexes as with models. Even attach them to ordinary models for automatic index. I made simple client class that could create index and add data to it. Enough for my project.
+I was faced with problem to make fast search over 300k table on multiple columns for thrird party integration. This is not so big volume for modern databases, especially if you have multiple replicas, but I didn't want even this small load on my core servers. I decided to index data for this problem in separate microservice. From previous projects I wanted to use Sphinx, but discovered that this project literally dead. Last commit was near a year ago. It is bad solution to use inactive projects in long perspective. Other option is Elasticsearch, very complex and heavy thing is overkill for that small problem. Luckily Google picked up an article about Manticore search engine in Chrome app at phone. It is active clone of Sphinx with a number of functions that parent project should have but don't.
 
-## Uncle Bob taught me writing unit tests
-2021-05-22
+Requiremets:
+* Two different sources of table data
+* 300k rows total with 6 columns each
+* Search over all columns simultanuously
+* Search over each column separately
 
-After I read Uncle Bob's book "Clean coder" I became a big fan of TDD. Book clarified to me the true purpose of writing tests. I made a few last projects using described ping-pong technique and was very satisfied with that. The key of that technique is switching every 30s between test and production code. Write testing code line, write coresponding production code, test and again. It require some discipline to follow TDD. Every time I feel lazy writing a test I hear Uncle Bob's claim "Who do you think you are?" and this is enough motivation for me now. Also I liked his statement that for being professional you must spend 20 hours a week on self improvement. You can not to spend this time but then don't call yourself a "Professional".
 
-While writing the Manticore client class I didn't use TDD practice. I actually learned protocol while writing this class and didn't know what result I wanted to get. So I didn't know what to test. Result of this prototyping satisfied me enough to commit it to production. Of Course I need to write a test for it, otherwise it would be technical debt. Such situations decrease code coverage and could be seen on metrics if you collect them. Other option is to throw away all client code and rewrite it in TDD maner. Which is better in this situation? First option is ok, i think. Any objetions?
