@@ -1,5 +1,6 @@
 ---
-layout:page
+layout: page
+title: Figma UI testing
 ---
 
 Hi
