@@ -16,7 +16,7 @@ https://www.figma.com/file/<drawing>?node-id=387%3A4882
 
 ## Taking screenshot and comparing with reference
 
-There are a number of tools to compare screenshots but I was lucky to select [Backstop](https://github.com/garris/BackstopJS) that fit all my needs. Normaly it using for controlling regressions between versions of one screen. Backlog has command `backstop approve` that took recent screenshots as reference to compare. All we need is place our templates in backlog_reference dir in same format as references. Then start `backlog test` and get results.
+There are a number of tools to compare screenshots but I was lucky to select [Backstop](https://github.com/garris/BackstopJS) that fit all my needs. Normaly it using for controlling regressions between versions of one screen. Backlog has command `backstop approve` that took recent screenshots as reference to compare. All we need is to place our templates in backlog_reference dir in same format as references. Then start `backlog test` and get results.
 
 ## Results
 
