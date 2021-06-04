@@ -24,4 +24,10 @@ There are several kinds of columns: attributes and full text search fields. Ever
 SELECT * FROM table WHERE MATCH('name') AND city='City';
 ```
 
-In first implementation I decided to meet forth requirement with REGEX function over indexed attributes but it was mistake because REGEX testing strings case sensitive and there is no way to change this behavior. Proper way is to [use](https://manual.manticoresearch.com/Searching/Full_text_matching/Operators#Full-text-operators) very flexible query syntax of MATCH operator.
+In first implementation I decided to meet forth requirement with REGEX function over indexed attributes but it was mistake because REGEX testing strings case sensitive and there is no way to change this behavior. Proper way is to [use](https://manual.manticoresearch.com/Searching/Full_text_matching/Operators#Full-text-operators) very flexible query syntax of MATCH operator. Now I'm searching by field separatly with query:
+
+```sql
+SELECT * FROM table WHERE MATCH('@value value');
+```
+
+I'm very glad to find such a good project as Manticore. Thanx for it to maintainers!
