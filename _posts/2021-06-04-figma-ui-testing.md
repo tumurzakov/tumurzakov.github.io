@@ -1,1 +1,3 @@
 There was a task in backlog to update footer design of corporate site. Recently we found time for that. It was one of the simpliest things that could be done I thought. But this task took over a month of four people and that is why...
+
+It is a shame how worklow was bad on this task. I delegated it to frontend developer. Requirements was in figma drawn by designer. Everytime when developer ends a piece of work he wrote me over whatsapp to ask stakeholder to check. I wrote a message to stakeholder and he sit down with designer in front of one monitor compare result on staging and wrote notices in figma. Then communication came back in reverse order for the next iteration. Disgusting! 
