@@ -1,3 +1,9 @@
+---
+layout: page
+permalink: /about/
+title: About me
+---
+
 # Temir Umurzakov
 
 * Live in Kyrgyzstan (republic of former USSR)
