@@ -30,4 +30,4 @@ In first implementation I decided to meet forth requirement with REGEX function 
 SELECT * FROM table WHERE MATCH('@value value');
 ```
 
-I'm very glad to find such a good project as Manticore. Thanx for it to maintainers!
+I'm very glad to find such a good project as Manticore. Huge thanx for it to maintainers!
