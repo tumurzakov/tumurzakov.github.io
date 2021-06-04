@@ -1,1 +1,1 @@
-Hi
+Recently marketing stakeholder came with request to update footer design on corporate site. It was one of the simpliest things that could be done I thought. This task took over a month of time of four people and that is why.
