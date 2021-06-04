@@ -8,8 +8,17 @@ Designer working in Figma and composing screens that idealy fit as acceptance te
 
 ## Export from Figma
 
-Figma has awesome [API](https://www.figma.com/developers/api) to export assets from drawings. We need draw screens as acceptance test, write down IDs of this blocks and fetch them over API using [Get Image endpoint](https://www.figma.com/developers/api#get-images-endpoint).
+Figma has awesome [API](https://www.figma.com/developers/api) to export assets from drawings. We need draw screens as acceptance test, write down IDs of this blocks and fetch them over API using [Get Image endpoint](https://www.figma.com/developers/api#get-images-endpoint). IDs of the block is url encoded in url and could be  seen in address bar of browser when selecting block. That part `node-id` is that we need. `%3A` is url encoded `:` symbol.
 
 ```
-
+https://www.figma.com/file/<drawing>?node-id=387%3A4882
 ```
+
+## Taking screenshot and comparing with reference
+
+There are a number of tools to compare screenshots but I was lucky to select [Backstop](https://github.com/garris/BackstopJS) that fit all my needs. Normaly it using for controlling regressions between versions of one screen. Backlog has command `backstop approve` that took recent screenshots as reference to compare. All we need is place our templates in backlog_reference dir in same format as references. Then start `backlog test` and get results.
+
+## Results
+
+I'm testing this tool now and it seems very promissing. Templating become very easy. Make minor change, run `backstop test`, watch difference. "Aha, one more pixel to the left here". Delightfully!
+
