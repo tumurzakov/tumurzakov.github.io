@@ -1,5 +1,6 @@
 ---
 title: Figma UI testing
+tags: figma ui testing acceptance
 ---
 
 There was a task in the backlog to update the footer design of the corporate site. Recently we found time for that. It was one of the simplest things that could be done I thought. But this task took over a month for four people and that is why...
