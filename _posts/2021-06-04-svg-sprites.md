@@ -1,5 +1,6 @@
 ---
 title: I didn't know that using SVG sprites could be such a headache!
+tags: svg sprite webpack headache css
 ---
 
 Earlier we used image sprites to optimize network load of the sites. Now comes an era of vector graphics and particular SVG. I tried to use patterns that were familiar to me from previous lives and I could not. That's why...
