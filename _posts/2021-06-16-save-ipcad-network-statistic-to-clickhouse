@@ -1,0 +1,197 @@
+What you find in this article:
+* [IPCAD](https://lionet.info/ipcad/) daemon pretends to be a Cisco router and provides aggregated network statistic
+* Example of using materialized views in ClickHouse
+* [Ipcad2Ch](https://github.com/inkuber/ipcad2ch) repository on github with my utility that will help you to organize accounting of network traffic
+
+# Как я сохранил сетевую статистику из IPCAD в ClickHouse
+
+В эпоху широполосных интернетов мало кому придет в голову считать трафик, разве что небольшим ISP, почему-то до сих пор не поглощенных крупными игроками. Инфраструктуру одного такого оператора связи мне посчастливилось поддерживать. Стек технологий там следующий:
+
+* Машина с FreeBSD как маршрутизатор, со сбором статистики в демоне IPCAD
+* Машина с FreeBSD с самописной программой биллингом на PHP, база данных PostgreSQL. Агрегаты хранятся в БД, статистика в архивированных файлах IPCAD.
+
+Когда-то такой конфигурации хватало для сохранения статистики узких каналов 2000ых, но сейчас в эпоху гигабитов стало совсем плохо и все стало безбожно тормозить. Значит пора что-то делать...
+
+<cut />
+
+Если начало тормозить, что нужно? Поставить то, что не тормозит. А все мы знаем, что ClickHouse не тормозит, значит его то мы и ставим. 
+
+<spoiler title="ClickHouse  - это ...">
+ClickHouse - это база данных, созданная в недрах отечественного Yandex. Особенностью является то, что она колоночная, т.е. хранит данные таблиц не построчно, как делают это реляционные базы данных, а поколоночно - объединяя в файлах данные колонок. Это дает преимущества при обработке информации в рамках нескольких колонок, не читая с диска весь массив построчно.
+</spoiler>
+
+Основным функционалом приложения являются отчеты о потреблении услуги:
+
+* Кто из абонентов сколько потребил за отчетный период и сколько нужно за это попросить денег.
+* Посмотреть сколько потребил услуги абонент в определенный день, час и минуту с построением красивых графиков.
+* Выдать детальную информацию на запрос абонента, куда он ходил за запрошенный интервал времени.
+
+Исходя из требований нам необходимо сохранять получаемую информацию из формата IPCAD как есть и строить некоторые агрегаты по времени. Вроде не сложно...
+
+# Формат IPCAD
+
+IPCAD (Cisco IP accounting simulator) - демон, считающий проходящий мимо маршрутизатора трафик и строящий агрегаты количества пакетов и объема трафика в памяти по кортежу:
+
+* IP источника
+* Порт источника
+* IP приемника
+* Порт приемника
+* Протокол
+* Интерфейс
+
+Данные можно получить запросив их через RSH
+
+```
+#!/bin/sh
+RSH=`which rsh`
+IP=<IP адрес маршрутизатора>
+FILE=Куда сохраняем
+
+# сбросить статистику до контрольной точки
+$RSH -l root $IP clear ip accounting > /dev/null
+
+# показать статистику сохраненную в контрольных точках
+$RSH -l root $IP show ip accounting checkpoint > $FILE
+```
+Получим вывод в виде:
+
+```
+   Source           Destination    Packets        Bytes  SrcPt DstPt Proto   IF
+ 188.218.189.188  188.138.119.98         1           88     83 28088    18  em1
+ 188.218.189.188  188.138.119.98         1           88     83 12038    18  em1
+ 108.232.38.113   188.218.189.198        1           80    883 28818     8  em1
+```
+Вот эти данные мы и хотим сохранять не по старинке, в zip архивах, а в модном и молодежном ClickHouse.
+
+# Структура таблиц в ClickHouse
+
+Одной из самых могучих функций ClickHouse являются материализованные представления. Это таблицы, которые сами обновляются из данных, сохранненных в других таблицах. Т.е. мы можем делать инсерты в таблицу детального трафика, а агрегаты будут строиться сами по себе по заданным в представлениях правилах.
+
+<spoiler title="Табличка детального трафика">
+```sql
+CREATE TABLE IF NOT EXISTS details
+(
+    collected DateTime,
+    user_id String,
+    dir Enum8('unknown' = 0, 'in' = 1, 'out' = 2),
+    class Enum8('unknown' = 0, 'local' = 1, 'peering' = 2, 'internet' = 3, 'multicast' = 4),
+    src_ip UInt32,
+    src_port UInt16,
+    dst_ip UInt32,
+    dst_port UInt16,
+    packets UInt16,
+    bytes UInt32,
+    proto UInt8
+)
+ENGINE = MergeTree
+PARTITION BY toYYYYMMDD(collected)
+ORDER BY (collected, user_id, dir, class, src_ip, dst_ip, proto)
+SETTINGS index_granularity = 8192
+```
+</spoiler>
+
+В табличке детального трафика мы сохраняем структуру данных IPCAD, добавляя временную метку и несколько полей для классификации записей по коду абонента, направлению и классу трафика. Теперь построим материализованные представления:
+
+<spoiler title="Табличка агрегатов по дням">
+CREATE MATERIALIZED VIEW IF NOT EXISTS daily
+(
+    date Date,
+    user_id String,
+    class Enum8('unknown' = 0, 'local' = 1, 'peering' = 2, 'internet' = 3, 'multicast' = 4),
+    dir Enum8('unknown' = 0, 'in' = 1, 'out' = 2),
+    bytes AggregateFunction(sum, UInt32)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY toYYYYMM(date)
+ORDER BY (date, user_id, class, dir)
+SETTINGS index_granularity = 8192 AS
+SELECT
+    toDate(collected) AS date,
+    user_id,
+    class,
+    dir,
+    sumState(bytes) AS bytes
+FROM details
+GROUP BY
+    toDate(collected),
+    user_id,
+    class,
+    dir
+</spoiler>
+
+<spoiler title="Таблицы агрегатов по часам и минутам">
+CREATE MATERIALIZED VIEW IF NOT EXISTS hourly
+(
+    date DateTime,
+    user_id String,
+    class Enum8('unknown' = 0, 'local' = 1, 'peering' = 2, 'internet' = 3, 'multicast' = 4),
+    dir Enum8('unknown' = 0, 'in' = 1, 'out' = 2),
+    bytes AggregateFunction(sum, UInt32)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY toYYYYMM(date)
+ORDER BY (date, user_id, class, dir)
+SETTINGS index_granularity = 8192 AS
+SELECT
+    toStartOfHour(collected) AS date,
+    user_id,
+    class,
+    dir,
+    sumState(bytes) AS bytes
+FROM details
+GROUP BY
+    toStartOfHour(collected),
+    user_id,
+    class,
+    dir;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS minutely
+(
+    date DateTime,
+    user_id String,
+    class Enum8('unknown' = 0, 'local' = 1, 'peering' = 2, 'internet' = 3, 'multicast' = 4),
+    dir Enum8('unknown' = 0, 'in' = 1, 'out' = 2),
+    bytes AggregateFunction(sum, UInt32)
+)
+ENGINE = AggregatingMergeTree()
+PARTITION BY toYYYYMM(date)
+ORDER BY (date, user_id, class, dir)
+SETTINGS index_granularity = 8192 AS
+SELECT
+    toStartOfMinute(collected) AS date,
+    user_id,
+    class,
+    dir,
+    sumState(bytes) AS bytes
+FROM details
+GROUP BY
+    toStartOfMinute(collected),
+    user_id,
+    class,
+    dir;
+</spoiler>
+
+Вжух и агрегаты сами считаются при добавлении записей в таблицу детального трафика. Это магия!
+
+# Сохраняем в ClickHouse
+Теперь осталось самое легкое, сделать тулзу. Рисуем два овала, потом дорисовываем всю остальную сову. Взял любимый Golang, распарсил, классифицировал и сохранил. Получилась простенькая программка, которую выложил на github.
+
+* [ipcad2ch](https://github.com/inkuber/ipcad2ch)
+
+## Способ применения
+Помните в начале был скрипт съема статистики с IPCAD, давайте его немного изменим:
+```
+#!/bin/sh
+RSH=`which rsh`
+IP=<IP адрес маршрутизатора>
+FILE=Куда сохраняем
+
+# сбросить статистику до контрольной точки
+$RSH -l root $IP clear ip accounting > /dev/null
+
+# показать статистику сохраненную в контрольных точках
+$RSH -l root $IP show ip accounting checkpoint | ipcad2sh > $FILE
+```
+В разрез сохранения в файл, добавили нашу программу, которая читает данные из стандартного ввода, сохраняет их в ClickHouse и печатает все в стандартный вывод. Таким образом мы можем сразу начать сохранять статистику, не меняя работу легаси кода. Осталось собрать достаточно статистики и плавно перейти на новый источник данных. У меня архивная статистика хранится в zip файлах и ее тоже можно загнать через утилиту в БД, что я за кадром и сделал.
+
+## Опыт применения
