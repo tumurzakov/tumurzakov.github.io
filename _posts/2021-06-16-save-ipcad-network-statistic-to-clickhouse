@@ -1,20 +1,17 @@
 What you will find in this article:
-* [IPCAD](https://lionet.info/ipcad/) daemon pretends to be a Cisco router and provides aggregated network statistic
-* Example of using materialized views in ClickHouse
-* [Ipcad2Ch](https://github.com/inkuber/ipcad2ch) repository on github with my utility that will help you to organize accounting of network traffic
+* Description of [IPCAD](https://lionet.info/ipcad/) daemon that pretends as a Cisco router and provides aggregated network statistic
+* Example of materialized views in ClickHouse database
+* [ipcad2ch](https://github.com/inkuber/ipcad2ch) utility that will help you to organize accounting of network traffic
 
-# Как я сохранил сетевую статистику из IPCAD в ClickHouse
+# How I saved network statistics from IPCAD to ClickHouse 
+In the era of broadband Internet there are not so much sense to account network traffic. May be just a small ISP by some reason not taken by the big players. Ifrastracture of this kind of ISP I proudly supporting. Technological stack is following:
 
-В эпоху широполосных интернетов мало кому придет в голову считать трафик, разве что небольшим ISP, почему-то до сих пор не поглощенных крупными игроками. Инфраструктуру одного такого оператора связи мне посчастливилось поддерживать. Стек технологий там следующий:
+* FreeBSD server as router that aggregate network statistic in IPCAD daemon
+* FreeBSD server with self made billing on PHP and PostgreSQL database. Aggregates are saved in DB, detail statistic in zipped ipcad text files
 
-* Машина с FreeBSD как маршрутизатор, со сбором статистики в демоне IPCAD
-* Машина с FreeBSD с самописной программой биллингом на PHP, база данных PostgreSQL. Агрегаты хранятся в БД, статистика в архивированных файлах IPCAD.
+This configuration was enoght for narrow network channels of 2000th but now in the epoch of gigabites become very bad and everything start to shamelessly slow down. It's time to do something...
 
-Когда-то такой конфигурации хватало для сохранения статистики узких каналов 2000ых, но сейчас в эпоху гигабитов стало совсем плохо и все стало безбожно тормозить. Значит пора что-то делать...
-
-<cut />
-
-Если начало тормозить, что нужно? Поставить то, что не тормозит. А все мы знаем, что ClickHouse не тормозит, значит его то мы и ставим. 
+If something start to slow down, what we need? Right, something that could not be slow. As everybody knows ClickHouse is never slow then we install it.
 
 <spoiler title="ClickHouse  - это ...">
 ClickHouse - это база данных, созданная в недрах отечественного Yandex. Особенностью является то, что она колоночная, т.е. хранит данные таблиц не построчно, как делают это реляционные базы данных, а поколоночно - объединяя в файлах данные колонок. Это дает преимущества при обработке информации в рамках нескольких колонок, не читая с диска весь массив построчно.
