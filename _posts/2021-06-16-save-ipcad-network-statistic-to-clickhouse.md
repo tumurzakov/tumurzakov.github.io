@@ -67,7 +67,8 @@ This data we need to store not in old fasion way in zip archive but in brand new
 One of the most power features of ClickHouse is materialized views. It is tables that could be updated automaticaly from data saved in other tables i.e we could insert into detal traffic table and aggregates will be calculated automaticaly by giving rules.
 
 <details>
-<summary>Табличка детального трафика</summary>
+  <summary>Табличка детального трафика</summary>
+  
 ```sql
 CREATE TABLE IF NOT EXISTS details
 (
@@ -93,7 +94,8 @@ SETTINGS index_granularity = 8192
 In the table of detail traffic we store IPCAD data as is also adding timestamp and several classification fields as customer id, traffic direction and traffic class. Lets make materialized views:
 
 <details>
-<summary>Табличка агрегатов по дням</summary>
+  <summary>Табличка агрегатов по дням</summary>
+  
 ```sql
 CREATE MATERIALIZED VIEW IF NOT EXISTS daily
 (
@@ -123,7 +125,8 @@ GROUP BY
 </details>
 
 <details>
-<summary>Таблицы агрегатов по часам и минутам</summary>
+  <summary>Таблицы агрегатов по часам и минутам</summary>
+  
 ```sql
 CREATE MATERIALIZED VIEW IF NOT EXISTS hourly
 (
