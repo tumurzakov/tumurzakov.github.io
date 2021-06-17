@@ -62,11 +62,12 @@ Output is:
 
 This data we need to store not in old fasion way in zip archive but in brand new ClickHouse database.
 
-# Структура таблиц в ClickHouse
+# Table structure in ClickHouse
 
-Одной из самых могучих функций ClickHouse являются материализованные представления. Это таблицы, которые сами обновляются из данных, сохранненных в других таблицах. Т.е. мы можем делать инсерты в таблицу детального трафика, а агрегаты будут строиться сами по себе по заданным в представлениях правилах.
+One of the most power features of ClickHouse is materialized views. It is tables that could be updated automaticaly from data saved in other tables i.e we could insert into detal traffic table and aggregates will be calculated automaticaly by giving rules.
 
-<spoiler title="Табличка детального трафика">
+<details>
+<summary>Табличка детального трафика</summary>
 ```sql
 CREATE TABLE IF NOT EXISTS details
 (
@@ -87,11 +88,13 @@ PARTITION BY toYYYYMMDD(collected)
 ORDER BY (collected, user_id, dir, class, src_ip, dst_ip, proto)
 SETTINGS index_granularity = 8192
 ```
-</spoiler>
+</details>
 
-В табличке детального трафика мы сохраняем структуру данных IPCAD, добавляя временную метку и несколько полей для классификации записей по коду абонента, направлению и классу трафика. Теперь построим материализованные представления:
+In the table of detail traffic we store IPCAD data as is also adding timestamp and several classification fields as customer id, traffic direction and traffic class. Lets make materialized views:
 
-<spoiler title="Табличка агрегатов по дням">
+<details>
+<summary>Табличка агрегатов по дням</summary>
+```sql
 CREATE MATERIALIZED VIEW IF NOT EXISTS daily
 (
     date Date,
@@ -117,8 +120,10 @@ GROUP BY
     class,
     dir
 </spoiler>
-
-<spoiler title="Таблицы агрегатов по часам и минутам">
+```
+<details>
+<summary>Таблицы агрегатов по часам и минутам</summary>
+```sql
 CREATE MATERIALIZED VIEW IF NOT EXISTS hourly
 (
     date DateTime,
@@ -168,29 +173,30 @@ GROUP BY
     user_id,
     class,
     dir;
-</spoiler>
+```
+</details>
 
-Вжух и агрегаты сами считаются при добавлении записей в таблицу детального трафика. Это магия!
+Now aggregates calculating automaticaly when data inserted into detail table. It's the magic!
 
-# Сохраняем в ClickHouse
-Теперь осталось самое легкое, сделать тулзу. Рисуем два овала, потом дорисовываем всю остальную сову. Взял любимый Golang, распарсил, классифицировал и сохранил. Получилась простенькая программка, которую выложил на github.
+# Storing data into ClickHouse
+Now there is a little left to make a tool for that. Drawing two ovals and than finishing rest of the owl. I took my favorit Golang, parsed, classified and saved. I wrote a little simple application that opensourced on github.
 
 * [ipcad2ch](https://github.com/inkuber/ipcad2ch)
 
-## Способ применения
-Помните в начале был скрипт съема статистики с IPCAD, давайте его немного изменим:
-```
+## Usage
+Remember in the beginning of the artical was a script for fetching statistic from IPCAD, let's change it:
+
+```bash
 #!/bin/sh
 RSH=`which rsh`
-IP=<IP адрес маршрутизатора>
-FILE=Куда сохраняем
+IP=<router IP address>
+FILE=<saving path>
 
-# сбросить статистику до контрольной точки
+# flush statistic to control point
 $RSH -l root $IP clear ip accounting > /dev/null
 
-# показать статистику сохраненную в контрольных точках
-$RSH -l root $IP show ip accounting checkpoint | ipcad2sh > $FILE
+# show statistic in control point
+$RSH -l root $IP show ip accounting checkpoint | ipcad2ch > $FILE
 ```
-В разрез сохранения в файл, добавили нашу программу, которая читает данные из стандартного ввода, сохраняет их в ClickHouse и печатает все в стандартный вывод. Таким образом мы можем сразу начать сохранять статистику, не меняя работу легаси кода. Осталось собрать достаточно статистики и плавно перейти на новый источник данных. У меня архивная статистика хранится в zip файлах и ее тоже можно загнать через утилиту в БД, что я за кадром и сделал.
 
-## Опыт применения
+Insert tool with pipe after data fetch but before writing it to file. Now proggram reads ipcad data and saves it into ClickHouse then it prints it untouched to standart output. Thereby we could save data immediatly even not changing legacy code. Now we need to collect enought of statistic and smoothly transit to new data source. As I said, old statistic keeps in zip archives in ipcad format and could be also processed with this tool.
