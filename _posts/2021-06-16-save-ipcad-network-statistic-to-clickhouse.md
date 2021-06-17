@@ -39,7 +39,7 @@ IPCAD (Cisco IP accounting simulator) - daemon that accounts passing through rou
 
 Data could be fetched by requesting it using RSH
 
-```
+```bash
 #!/bin/sh
 RSH=`which rsh`
 IP=<router IP address>
@@ -119,8 +119,9 @@ GROUP BY
     user_id,
     class,
     dir
-</spoiler>
 ```
+</details>
+
 <details>
 <summary>Таблицы агрегатов по часам и минутам</summary>
 ```sql
