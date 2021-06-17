@@ -13,9 +13,10 @@ This configuration was enoght for narrow network channels of 2000th but now in t
 
 If something start to slow down, what we need? Right, something that could not be slow. As everybody knows ClickHouse is never slow then we install it.
 
-<spoiler title="ClickHouse  - это ...">
-ClickHouse - это база данных, созданная в недрах отечественного Yandex. Особенностью является то, что она колоночная, т.е. хранит данные таблиц не построчно, как делают это реляционные базы данных, а поколоночно - объединяя в файлах данные колонок. Это дает преимущества при обработке информации в рамках нескольких колонок, не читая с диска весь массив построчно.
-</spoiler>
+<details>
+  <summary>ClickHouse  - это ...</summary>
+  ClickHouse is a database, created in the bowels of russian company Yandex. Most interesting thing in this database is that it is column db, i.e. store datum of tables not by rows how it doing relation databases but by columns. Roughly saying, values of one column stored in one file. This gives advantages in processing data from several columns not reading everything from disk by rows.
+</details>
 
 Основным функционалом приложения являются отчеты о потреблении услуги:
 
