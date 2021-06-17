@@ -18,40 +18,40 @@ If something start to slow down, what we need? Right, something that could not b
   ClickHouse is a database, created in the bowels of russian company Yandex. Most interesting thing in this database is that it is column db, i.e. store datum of tables not by rows how it doing relation databases but by columns. Roughly saying, values of one column stored in one file. This gives advantages in processing data from several columns not reading everything from disk by rows.
 </details>
 
-Основным функционалом приложения являются отчеты о потреблении услуги:
+Main features of application are reports about service usage:
 
-* Кто из абонентов сколько потребил за отчетный период и сколько нужно за это попросить денег.
-* Посмотреть сколько потребил услуги абонент в определенный день, час и минуту с построением красивых графиков.
-* Выдать детальную информацию на запрос абонента, куда он ходил за запрошенный интервал времени.
+* Who and how much traffic consumed by customers in report repiod and how much money we must ask from them.
+* Take a look how much service consumed by customer in particular day, hour and minute with beautiful charts.
+* Output detail information by customer request where where he was in internet by requested period.
 
-Исходя из требований нам необходимо сохранять получаемую информацию из формата IPCAD как есть и строить некоторые агрегаты по времени. Вроде не сложно...
+It comes from requirements that we need store received data from IPCAD format as is and calculate some aggregates by time. Looks not so difficult...
 
-# Формат IPCAD
+# IPCAD format
 
-IPCAD (Cisco IP accounting simulator) - демон, считающий проходящий мимо маршрутизатора трафик и строящий агрегаты количества пакетов и объема трафика в памяти по кортежу:
+IPCAD (Cisco IP accounting simulator) - daemon that accounts passing through router traffic and calculating aggregates of packet count and traffic volume in RAM by tuple:
 
-* IP источника
-* Порт источника
-* IP приемника
-* Порт приемника
-* Протокол
-* Интерфейс
+* source IP
+* source Port
+* destination IP
+* destination Port
+* Protocol
+* Interface
 
-Данные можно получить запросив их через RSH
+Data could be fetched by requesting it using RSH
 
 ```
 #!/bin/sh
 RSH=`which rsh`
-IP=<IP адрес маршрутизатора>
-FILE=Куда сохраняем
+IP=<router IP address>
+FILE=<saving path>
 
-# сбросить статистику до контрольной точки
+# flush statistic to control point
 $RSH -l root $IP clear ip accounting > /dev/null
 
-# показать статистику сохраненную в контрольных точках
+# show statistic in control point
 $RSH -l root $IP show ip accounting checkpoint > $FILE
 ```
-Получим вывод в виде:
+Output is:
 
 ```
    Source           Destination    Packets        Bytes  SrcPt DstPt Proto   IF
@@ -59,7 +59,8 @@ $RSH -l root $IP show ip accounting checkpoint > $FILE
  188.218.189.188  188.138.119.98         1           88     83 12038    18  em1
  108.232.38.113   188.218.189.198        1           80    883 28818     8  em1
 ```
-Вот эти данные мы и хотим сохранять не по старинке, в zip архивах, а в модном и молодежном ClickHouse.
+
+This data we need to store not in old fasion way in zip archive but in brand new ClickHouse database.
 
 # Структура таблиц в ClickHouse
 
