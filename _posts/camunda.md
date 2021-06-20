@@ -12,3 +12,9 @@ Processing of single complain could take several weeks and it was very annoying 
 Decision was to process all complain by one person from beginning to the end.
 After that change processing time of one task magically decreases from several weeks to several hours just because of eleminating of time gaps on transferring between employees.
 
+Camunda is smart task engine that works with BPMN diagrams and could track execution of process.
+There are wonderfull tools for controlling execution flow of the tasks between multiple participants:
+* Gates that could decide in which direction execution will come
+* System tasks that could make background calculations
+* Subprocesses that helps decompose complex tasks into a number of simple steps
+
