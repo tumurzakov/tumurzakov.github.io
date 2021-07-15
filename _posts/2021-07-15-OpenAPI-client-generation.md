@@ -20,11 +20,11 @@ Very easy :) But there are subtleties. Using it with PHP version less than 8.0 i
 
 Example. Fetching process definitions:
 ```php
-         $defs = $this->api->ProcessDefinition;
-         $definitions = $defs->getProcessDefinitions(
-             latest_version: true,
-             startable_in_tasklist: true
-         );
+$defs = $this->api->ProcessDefinition;
+$definitions = $defs->getProcessDefinitions(
+    latest_version: true,
+    startable_in_tasklist: true
+);
 ```
 
 And `getProcessDefinition` generated definition:
