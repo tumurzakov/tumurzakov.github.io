@@ -19,7 +19,7 @@ title: About me
 
 ### 🎯 **PROFESSIONAL SUMMARY**
 
-Experienced Lead Developer and Technical Leader with 15+ years in telecommunications industry. Expert in scaling IT systems from startup to enterprise-level ISP serving 300,000+ subscribers. Specialized in distributed systems architecture, DevOps, team leadership, and modern technology implementation with focus on business-driven solutions.
+Experienced Lead Developer and Technical Leader with 15+ years in telecommunications industry. Expert in scaling IT systems from startup to enterprise-level ISP serving 100,000+ subscribers. Specialized in distributed systems architecture, DevOps, team leadership, and modern technology implementation with focus on business-driven solutions.
 
 ---
 
@@ -29,7 +29,7 @@ Experienced Lead Developer and Technical Leader with 15+ years in telecommunicat
 **OSOO AkNet (ISP)** | *2009 - Present (15+ years)*
 
 **Key Achievements:**
-- 🚀 Scaled company from <1,000 to 300,000+ subscribers
+- 🚀 Scaled company from <1,000 to 100,000+ subscribers
 - 💰 Architected and implemented payment gateway with 20+ banking integrations (100% ownership)
 - 🏗️ Designed and deployed microservices architecture on Kubernetes (100+ services)
 - 📊 Implemented Big Data system processing 80GB daily (ClickHouse)
