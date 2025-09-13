@@ -1,3 +1,8 @@
+---
+title: Juport (Jupyter Report System)
+tags: juport jupyter reports python
+---
+
 ## I “Vibe-Coded” You a Management System for 100,500 Jupyter Notebooks
 
 I’ll tell the story of how I solved the chaos in my Jupyter reports and built **juport (Jupyter Report System)** [GitHub link](https://github.com/tumurzakov/juport). I’ll also share a few thoughts on how development is changing in the era of AI assistants.
