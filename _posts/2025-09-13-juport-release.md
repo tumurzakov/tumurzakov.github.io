@@ -1,13 +1,11 @@
 ---
-title: Juport (Jupyter Report System)
+title: I “Vibe-Coded” You a Management System for 100,500 Jupyter Notebooks
 tags: juport jupyter reports python
 ---
 
-## I “Vibe-Coded” You a Management System for 100,500 Jupyter Notebooks
-
 I’ll tell the story of how I solved the chaos in my Jupyter reports and built **juport (Jupyter Report System)** [GitHub link](https://github.com/tumurzakov/juport). I’ll also share a few thoughts on how development is changing in the era of AI assistants.
 
-### The Problem: 100,500 Reports and No Order
+## The Problem: 100,500 Reports and No Order
 
 I had accumulated a huge number of reports made in Jupyter Lab. Each one was a separate file with code, passwords, and all the behind-the-scenes “kitchen.”
 
@@ -17,7 +15,7 @@ I had accumulated a huge number of reports made in Jupyter Lab. Each one was a s
 * **Routine.** There’s no centralized place to run reports, set up schedules, and have a unified viewing interface.
 * **Chaos.** All results are scattered across folders, and finding the right Excel file took a lot of digging.
 
-### The Concept
+## The Concept
 
 I needed something that would let me develop reports in the familiar Jupyter Lab, then automatically run them, generate clean HTML versions without code, and gather all artifacts in one place.
 
@@ -28,7 +26,7 @@ I created a system (well, more like vibe-coded it) consisting of two components:
 1. **Jupyter Lab** sidecar. A standard Jupyter Lab in a Docker container. This is where developers write and test reports as usual.
 2. **juport** **— the management system.** A Python web app that scans the notebook folder. It lets you run reports manually or on a schedule, executes them in an isolated environment, generates HTML versions stripped of extra info, collects all artifacts (Excel, images) into a single table, and provides a convenient web interface. Authentication is via **LDAP**.
 
-### How It Works
+## How It Works
 
 **Report development:**
 
@@ -52,7 +50,7 @@ I created a system (well, more like vibe-coded it) consisting of two components:
 
 ---
 
-### How It Was Built
+## How It Was Built
 
 I didn’t write a single line of code myself. I **vibe-coded** everything via **Cursor** using prompts.
 
@@ -71,7 +69,7 @@ That’s why those who “get it” will get great results, and those who don’
 
 **AI assistants** aren’t a replacement for developers, but a tool that multiplies our speed. Experience and architectural understanding become even more important. And it will be harder for newcomers, because they’ll have to study technologies deliberately to get high-quality output from neural networks.
 
-### Takeaways
+## Takeaways
 
 1. **AI assistants** are not a replacement, but an **instrument**.
 2. **Experience and understanding** of architecture are critically important.
