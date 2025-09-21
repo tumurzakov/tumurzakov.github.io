@@ -1,8 +1,7 @@
 ---
-title: Evening Vibecoder: MyRepETL — MySQL ETL through Replication
+title: Evening Vibecoder MyRepETL — MySQL ETL through Replication
 tags: myrepetl etl reports mysql replication
 ---
-
 Hey, colleagues! 👋 
 
 Welcome back to the "evening vibecoder" series, and today I brought you **MyRepETL** ([GitHub link](https://github.com/tumurzakov/myrepetl)) — a tool for ETL through MySQL replication. 
